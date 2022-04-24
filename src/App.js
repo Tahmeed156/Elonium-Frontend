@@ -73,7 +73,9 @@ function AppInside () {
         </p>
         <ul style={{ listStyle: "none" }}>
           <li>Eligible Receivers:</li>
-          {receivers !== null && receivers.map((item, i) => <li key={i}>{item}</li>)}
+          {receivers !== null && receivers.map((item, i) => {
+            return item !== "0x0000000000000000000000000000000000000000" && <li key={i}>{item}</li>;
+          })}
         </ul> <br />
         {/* {<Button variant="outlined" onClick={connect}>Connect wallet</Button>} */}
 
