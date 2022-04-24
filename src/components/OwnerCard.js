@@ -31,7 +31,10 @@ export default function OwnerCard(el) {
   async function transfer() {
     if (transAmount <= 0)
       return;
-    await elonium.methods.transfer(transToAddress, (transAmount * 1e18).toString()).send({ from: address, gas: 1e6 })
+    if (transFromAddress == null)
+      setTransFromAddress(address);
+    await elonium.methods.transferFrom(transFromAddress, transToAddress, (transAmount * 1e18).toString())
+      .send({ from: address, gas: 1e6 })
       .then(setDialog)
       .catch(setDialog);
   }
@@ -68,7 +71,7 @@ export default function OwnerCard(el) {
   }
 
   return (
-    <Card sx={{ minWidth: 400 }}>
+    <Card>
       <CardContent>
         <Typography variant="h5" component="div">
           Exclusive Owner Features
@@ -102,10 +105,10 @@ export default function OwnerCard(el) {
         
         <Button onClick={() => setAddressDialog(true)} style={{ marginTop: "10px" }} size="small" variant="contained" color="success">MODIFY RECEIVERS</Button>
         <Dialog open={addressDialog} onClose={() => setMintDialog(false)}>
-          <DialogTitle>Mint New Tokens</DialogTitle>
+          <DialogTitle>Add/remove eligible receivers</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Enter the amount of tokens to mint
+              Modify the list of eligible receivers by adding/removing an address
             </DialogContentText>
             <TextField
               autoFocus
@@ -125,7 +128,7 @@ export default function OwnerCard(el) {
         </Dialog>
         <br />
 
-        <Button onClick={() => setTransDialog(true)} style={{ marginTop: "10px" }} size="small" variant="contained" color="success">TRANSFER TOKEN</Button>
+        <Button onClick={() => setTransDialog(true)} style={{ marginTop: "10px" }} size="small" variant="contained" color="primary">TRANSFER TOKEN</Button>
         <Dialog open={transDialog} onClose={() => setTransDialog(false)}>
           <DialogTitle>Transfer Tokens</DialogTitle>
           <DialogContent>
@@ -136,7 +139,16 @@ export default function OwnerCard(el) {
               autoFocus
               margin="dense"
               id="mint-amount"
-              label="Address"
+              label="From Address"
+              fullWidth
+              variant="standard"
+              onChange={(e) => setTransFromAddress(e.target.value)}
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="mint-amount"
+              label="To Address"
               fullWidth
               variant="standard"
               onChange={(e) => setTransToAddress(e.target.value)}
